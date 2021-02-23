@@ -9,11 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,26 +21,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @NoArgsConstructor
-public class Project {
+@Entity
+public class ProjectTask {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@NotBlank(message = "project name must not be blank")
-	private String projectName;
-	@NotBlank(message = "project identifier must not be blank")
-	@Size(min = 4, max = 5, message = "The size of project identifier must be either 4 or 5")
 	@Column(updatable = false, unique = true)
+	private String projectSequence;
+	@NotBlank(message = "Please include a project summary")
+	private String summary;
+	private String acceptanceCriteria;
+	private String status;
+	private Integer priority;
+	private Date dueDate;
+	@Column(updatable = false)
 	private String projectIdentifier;
-	@NotBlank(message = "project description must not be blank")
-	private String description;
-	@JsonFormat(pattern = "yyyy-mm-dd")
-	private Date start_date;
-	@JsonFormat(pattern = "yyyy-mm-dd")
-	private Date end_date;
 	
 	@JsonFormat(pattern = "yyyy-mm-dd")
 	@Column(updatable = false)
@@ -48,11 +46,11 @@ public class Project {
 	@JsonFormat(pattern = "yyyy-mm-dd")
 	private Date updated_At;
 	
-	//owing side of the relationship
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "backlog_id", updatable = false, nullable = false)
 	@JsonIgnore
 	private Backlog backlog;
-	
+
 	@PrePersist
 	public void onCreate() {
 		this.created_At = new Date();
@@ -62,6 +60,12 @@ public class Project {
 	public void onUpdate() {
 		this.updated_At = new Date();
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "ProjectTask [id=" + id + ", projectSequence=" + projectSequence + ", summary=" + summary
+				+ ", acceptanceCriteria=" + acceptanceCriteria + ", status=" + status + ", priority=" + priority
+				+ ", dueDate=" + dueDate + ", projectIdentifier=" + projectIdentifier + ", created_At=" + created_At
+				+ ", updated_At=" + updated_At + "]";
+	}
 }
