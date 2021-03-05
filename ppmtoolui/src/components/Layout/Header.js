@@ -1,15 +1,22 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 class Header extends Component {
   render() {
     console.log("render header");
+
+    const { validToken, user } = this.props.security;
+    let validUser = false;
+    if (validToken && user.id && localStorage.getItem("jwtToken")) {
+      validUser = true;
+    }
     return (
       <nav className="navbar navbar-expand-sm navbar-dark bg-primary mb-4">
         <div className="container">
-          <a className="navbar-brand" href="Dashboard.html">
+          <Link className="navbar-brand" to="/">
             Personal Project Management Tool
-          </a>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -22,22 +29,33 @@ class Header extends Component {
           <div className="collapse navbar-collapse" id="mobile-nav">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item">
-                <Link to="/dashboard" className="nav-link">
-                  Dashboard
-                </Link>
+                {validUser && (
+                  <Link to="/dashboard" className="nav-link">
+                    <i className="fas fa-user-circle mr-15">{user.fullname}</i>
+                  </Link>
+                )}
               </li>
             </ul>
 
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
-                <a className="nav-link " href="register.html">
-                  Sign Up
-                </a>
+                {!validUser && (
+                  <Link className="nav-link " to="/register">
+                    Sign Up
+                  </Link>
+                )}
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="login.html">
-                  Login
-                </a>
+                {validUser && (
+                  <Link to="/logout" className="nav-link">
+                    Logout
+                  </Link>
+                )}
+                {!validUser && (
+                  <Link to="/login" className="nav-link">
+                    Login
+                  </Link>
+                )}
               </li>
             </ul>
           </div>
@@ -47,4 +65,10 @@ class Header extends Component {
   }
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+  return {
+    security: state.security,
+  };
+};
+
+export default connect(mapStateToProps, null)(Header);

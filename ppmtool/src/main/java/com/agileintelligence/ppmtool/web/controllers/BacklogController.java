@@ -1,5 +1,6 @@
 package com.agileintelligence.ppmtool.web.controllers;
 
+import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -36,41 +37,46 @@ public class BacklogController {
 	//backlog_id is nothing but project_identifier
 	@PostMapping("/{backlog_id}")
 	public ResponseEntity<?> addProjectTaskToBacklog(@PathVariable(name = "backlog_id") String backlogId,
-			@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult) {
+			@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult, Principal principal) {
 
 		ResponseEntity<?> mapValidationErrors = validationServie.mapValidationService(bindingResult);
 		if(mapValidationErrors != null) {
 			return mapValidationErrors;
 		}
-		ProjectTask projectFromDB = projectTaskService.addProjectTask(backlogId, projectTask);
+		ProjectTask projectFromDB = projectTaskService.addProjectTask(backlogId, projectTask, principal.getName());
 		return new ResponseEntity<ProjectTask>(projectFromDB, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/{backlog_id}")
-	public ResponseEntity<List<ProjectTask>> getProjectbacklog(@PathVariable(name = "backlog_id") String backlogId) {
-		return new ResponseEntity<List<ProjectTask>>(projectTaskService.findBacklogById(backlogId), HttpStatus.OK);
+	public ResponseEntity<List<ProjectTask>> getProjectbacklog(@PathVariable(name = "backlog_id") String backlogId, Principal principal) {
+		return new ResponseEntity<List<ProjectTask>>(projectTaskService.findBacklogById(backlogId, principal.getName()), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{backlog_id}/{pt_id}")
-	public ResponseEntity<?> getProjectTask(@PathVariable(name = "backlog_id") String backlogId, @PathVariable(name = "pt_id") String ptId) {
-		return new ResponseEntity<ProjectTask>(projectTaskService.findProjectTaskByProjectSequence(backlogId, ptId), HttpStatus.OK);
+	public ResponseEntity<?> getProjectTask(@PathVariable(name = "backlog_id") String backlogId, 
+											@PathVariable(name = "pt_id") String ptId,
+											Principal principal
+			) {
+		return new ResponseEntity<ProjectTask>(projectTaskService.findProjectTaskByProjectSequence(backlogId, ptId, principal.getName()), HttpStatus.OK);
 	}
 	
 	// patchmapping
 	@PutMapping("/{backlog_id}/{pt_id}")
 	public ResponseEntity<?> updateProjectTask(@PathVariable(name = "backlog_id") String backlogId,
-			@PathVariable(name = "pt_id") String ptId, @Valid @RequestBody ProjectTask task, BindingResult bindingResult) {
+			@PathVariable(name = "pt_id") String ptId, @Valid @RequestBody ProjectTask task, BindingResult bindingResult, Principal principal) {
 		ResponseEntity<?> mapValidationErrors = validationServie.mapValidationService(bindingResult);
 		if(mapValidationErrors != null) {
 			return mapValidationErrors;
 		}
-		ProjectTask projectTask = projectTaskService.updateProjectTaskByProjectSequence(task, backlogId, ptId);
+		ProjectTask projectTask = projectTaskService.updateProjectTaskByProjectSequence(task, backlogId, ptId, principal.getName());
 		return new ResponseEntity<ProjectTask>(projectTask, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{backlog_id}/{pt_id}")
-	public ResponseEntity<?> deleteProjectTask(@PathVariable(name = "backlog_id") String backlogId,	@PathVariable(name = "pt_id") String ptId) {
-		projectTaskService.deleteProjectTask(backlogId, ptId);
+	public ResponseEntity<?> deleteProjectTask(@PathVariable(name = "backlog_id") String backlogId,	
+			@PathVariable(name = "pt_id") String ptId
+			, Principal principal) {
+		projectTaskService.deleteProjectTask(backlogId, ptId, principal.getName());
 		return new ResponseEntity<String>("The projecttask with the project task id " + ptId + " has been deleted", HttpStatus.OK);
 	}
 	

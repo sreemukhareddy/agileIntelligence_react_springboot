@@ -36,9 +36,11 @@ class UpdateProjectTask extends Component {
       this.props.match.params.pt_id,
       this.props.history
     );
-    this.setState({
-      ...this.props.project_task,
-    });
+    setTimeout(() => {
+      this.setState({
+        ...this.props.project_task,
+      });
+    }, 2000);
   }
 
   // static getDerivedStateFromProps(nextProps, prevState) {

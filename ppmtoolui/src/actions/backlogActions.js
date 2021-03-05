@@ -1,8 +1,20 @@
 import * as actionTypes from "./types";
 import axios from "axios";
 
+import setJWTToken from "../SecurityUtils/setJWTToken";
+import jwt_decode from "jwt-decode";
+
 export const addProjectTask = (backLogId, newProjectTask, history) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actionTypes.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .post(`/api/backlog/${backLogId}`, newProjectTask, {
         timeout: 3000,
@@ -28,6 +40,15 @@ export const addProjectTask = (backLogId, newProjectTask, history) => {
 
 export const getBacklogAndProjectTasks = (backlogId) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actionTypes.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .get(`/api/backlog/${backlogId}`)
       .then((response) => {
@@ -51,6 +72,15 @@ export const getProjectTaskRelatedToAbacklog = (
   history
 ) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actionTypes.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .get(`/api/backlog/${backlogId}/${projectTaskId}`)
       .then((response) => {
@@ -74,6 +104,15 @@ export const updateProjectTask = (
   history
 ) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actionTypes.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .put(`/api/backlog/${backlogId}/${projectTaskId}`, updatedProjectTask, {
         timeout: 3000,
@@ -95,6 +134,15 @@ export const updateProjectTask = (
 
 export const deleteProjectTask = (backLogId, projectTaskId) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actionTypes.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios.delete(`/api/backlog/${backLogId}/${projectTaskId}`).then((res) => {
       dispatch({
         type: actionTypes.DELETE_PROJECT_TASK,

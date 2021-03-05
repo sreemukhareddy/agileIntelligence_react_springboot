@@ -1,6 +1,8 @@
 import * as actions from "./types";
 
 import axios from "axios";
+import setJWTToken from "../SecurityUtils/setJWTToken";
+import jwt_decode from "jwt-decode";
 
 // export const createProject = (project, history) => async (dispatch) => {
 //   try {
@@ -28,6 +30,15 @@ export const clearProjectErrors = () => {
 
 export const createProject = (project, history) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actions.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .post("/api/project", project, {
         headers: {
@@ -48,6 +59,15 @@ export const createProject = (project, history) => {
 
 export const getProjects = () => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actions.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .get("/api/project")
       .then((response) => {
@@ -65,6 +85,15 @@ export const getProjects = () => {
 
 export const getProject = (projectId, history) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actions.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .get(`/api/project/${projectId}`)
       .then((response) => {
@@ -83,6 +112,15 @@ export const getProject = (projectId, history) => {
 
 export const deleteProject = (projectId, history) => {
   return (dispatch) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setJWTToken(token);
+      const decoded = jwt_decode(token); // all the claims that we put in backend security
+      dispatch({
+        type: actions.SET_CURRENT_USER,
+        payload: decoded,
+      });
+    }
     axios
       .delete(`/api/project/${projectId}`)
       .then((response) => {
